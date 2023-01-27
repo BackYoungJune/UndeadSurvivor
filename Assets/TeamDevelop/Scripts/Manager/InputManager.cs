@@ -24,10 +24,8 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.anyKey == false) return;
-
-        xMove = Input.GetAxis(xAxisName);
-        yMove = Input.GetAxis(yAxisName);
-
+        xMove = Input.GetAxisRaw(xAxisName);
+        yMove = Input.GetAxisRaw(yAxisName);
+        if (Input.anyKeyDown == false) return;
     }
 }
