@@ -12,7 +12,16 @@ public static class Managers
             return input;
         }
     }
-
-
     private static InputManager input;
+
+    public static GameManager Game
+    {
+        get
+        {
+            if(game == null) game = GameObject.FindObjectOfType<GameManager>();
+            return game;
+        }
+    }
+    private static GameManager game;
+
 }

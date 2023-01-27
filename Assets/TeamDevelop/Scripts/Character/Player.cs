@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     }
 
     [ReadOnly] public Vector3 CurrentMovement = Vector3.zero;
+    [HideInInspector] public Vector2 inputVec;
     //--------------------------------------------------------					
     // 내부 필드 변수					
     //--------------------------------------------------------	
@@ -63,8 +64,8 @@ public class Player : MonoBehaviour
 
     void AnimatorUpdate()
     {
-        Vector2 input = new Vector2(Managers.Input.xMove, Managers.Input.yMove);
-        Vector2 normalInput = input.normalized;
+        inputVec = new Vector2(Managers.Input.xMove, Managers.Input.yMove);
+        Vector2 normalInput = inputVec.normalized;
         animatorBase.SetFloat(animID__MovementSpeed, normalInput.magnitude);
     }
 
