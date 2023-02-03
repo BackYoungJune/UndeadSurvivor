@@ -24,4 +24,23 @@ public static class Managers
     }
     private static GameManager game;
 
+    public static PoolManager Pool
+    {
+        get
+        {
+            if(pool == null) pool = GameObject.FindObjectOfType<PoolManager>();
+            return pool;
+        }
+    }
+    private static PoolManager pool;
+
+    public static IPoolManager IPool
+    {
+        get
+        {
+            if(ipool == null) ipool = GameObject.FindObjectOfType<IPoolManager>();
+            return ipool;
+        }
+    }
+    private static IPoolManager ipool;
 }

@@ -42,15 +42,11 @@ public class TileMapReposition : MonoBehaviour
     //--------------------------------------------------------					
     // 내부 필드 변수					
     //--------------------------------------------------------	
-    // Start is called before the first frame update
-    void Start()
+    private Collider2D coll;
+    void Awake()
     {
-        
+        coll = GetComponent<Collider2D>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
