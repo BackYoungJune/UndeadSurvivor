@@ -6,49 +6,47 @@ public class IPoolManager : MonoBehaviour
     //--------------------------------------------------------					
     // 외부 참조 함수 & 프로퍼티					
     //--------------------------------------------------------	
-    public void Get(Enemy _createEnemy, Transform parent = null)
+    public GameObject Get(GameObject _createObject, Transform parent = null)
     {
         parentTranform = parent;
-        createEnemy = _createEnemy;
-        enemyPool.Get();
+        createObject = _createObject;
+        GameObject obj = objPool.Get();
+        return obj;
     }
 
-    public Enemy[] prefabs;
+    public GameObject[] prefabs;
     //--------------------------------------------------------					
     // 내부 필드 변수					
     //--------------------------------------------------------	
-    public IObjectPool<Enemy> enemyPool;
-    private Enemy createEnemy;
+    public IObjectPool<GameObject> objPool;
+    private GameObject createObject;
     private Transform parentTranform = null;
 
     void Awake()
     {
-        enemyPool = new ObjectPool<Enemy>(CreateEnemy, OnGetEnemy, OnReleaseEnemy, OnDestroyEnemy, maxSize: 20);    
+        objPool = new ObjectPool<GameObject>(CreateObject, OnGetObject, OnReleaseObject, OnDestroyObject, maxSize:100);    
     }
 
-    Enemy CreateEnemy()
+    GameObject CreateObject()
     {
-        Enemy obj = Instantiate(createEnemy, parentTranform);
-        obj.SetManagedPool(enemyPool);
-        obj.EnemyInit();
-
+        GameObject obj = Instantiate(createObject, parentTranform);
+        obj.GetComponent<PoolInterface<GameObject>>().SetManagedPool(objPool);
         return obj;
     }
 
-    void OnGetEnemy(Enemy enemy)
+    void OnGetObject(GameObject obj)
     {
-        enemy.gameObject.SetActive(true);
-        enemy.EnemyInit();
+        obj.gameObject.SetActive(true);
     }
 
-    void OnReleaseEnemy(Enemy enemy)
+    void OnReleaseObject(GameObject obj)
     {
-        enemy.gameObject.SetActive(false);
+        obj.gameObject.SetActive(false);
     }
 
-    void OnDestroyEnemy(Enemy enemy)
+    void OnDestroyObject(GameObject obj)
     {
-        Destroy(enemy.gameObject);
+        Destroy(obj.gameObject);
     }
 
 }

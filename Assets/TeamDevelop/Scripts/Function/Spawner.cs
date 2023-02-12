@@ -9,37 +9,35 @@ public class Spawner : MonoBehaviour
     //--------------------------------------------------------		
 
     public Transform[] spawnPoints;
-    public Enemy[] prefabs;
-
+    public GameObject prefabs;
+    public CharacterData characterData;
 
     //--------------------------------------------------------					
     // 내부 필드 변수					
     //--------------------------------------------------------	
     private float timer = 0;
+    private int level;
+    private float spawnTime;
 
     void Update()
     {
         timer += Time.deltaTime;
+        level = Managers.Game.level;
+        spawnTime = characterData.EnemyDatas[level].Data.spawnTime;
 
-        //if(timer > 0.4f)
-        //{
-        //    timer = 0;
-        //    Spawn();
-        //}
-        if(Input.GetKeyDown(KeyCode.K))
+        if (timer > spawnTime)
         {
-            for(int i = 0; i < 10; i++)
-            {
-                Spawn();
-            }
+            timer = 0;
+            Spawn();
         }
     }
 
     void Spawn()
     {
-        int num = Random.Range(0, 2);
+        //int num = Random.Range(0, 2);
         int spawnPoint = Random.Range(0, spawnPoints.Length);
-        //Managers.Pool.Get(num, spawnPoints[spawnPoint]);
-        Managers.IPool.Get(prefabs[num], spawnPoints[spawnPoint]);
+        GameObject obj = Managers.IPool.Get(prefabs, parent: spawnPoints[spawnPoint]);
+        obj.GetComponent<Enemy>().SetData(characterData.EnemyDatas[level]);
+        obj.GetComponent<Enemy>().Init();
     }
 }

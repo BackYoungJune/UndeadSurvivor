@@ -4,36 +4,49 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, PoolInterface<GameObject>
 {
     //--------------------------------------------------------					
     // 외부 참조 함수 & 프로퍼티					
     //--------------------------------------------------------		
-    public void SetManagedPool(IObjectPool<Enemy> pool, Transform parent = null)
+    public void SetManagedPool(IObjectPool<GameObject> pool, Transform parent = null)
     {
         Managedpool = pool;
-    }
-
-    //  임시코드
-    public void InvokeDestroyPool(float time)
-    {
-        Invoke("DestroyPool", time);
     }
 
     public void DestroyPool()
     {
         if(this != null)
         {
-            Managedpool.Release(this);
+            Managedpool.Release(this.gameObject);
         }
     }
 
-    public void EnemyInit()
+    public void Init()
     {
+        if (animator == null || rigid == null)
+        {
+            rigid = GetComponent<Rigidbody2D>();
+            animator = spriteRenderer.GetComponent<Animator>();
+        }
+
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
         transform.localScale = Vector3.one;
+        animator.runtimeAnimatorController = animatorController[enemyData.Data.spriteType];
+        speed = enemyData.Data.speed;
+        maxHealth = health = enemyData.Data.helath;
     }
+
+    public void SetData(EnemyData data)
+    {
+        enemyData = null;
+        enemyData = data;
+    }
+
+    public RuntimeAnimatorController[] animatorController;
+    public float health;
+    public float maxHealth;
 
     //--------------------------------------------------------					
     // 내부 필드 변수					
@@ -41,18 +54,22 @@ public class Enemy : MonoBehaviour
     [SerializeField, Range(0, 6f)] private float speed;
     [SerializeField] private SpriteRenderer spriteRenderer;
     private Rigidbody2D rigid;
-    private bool isLive = true;
+    private bool isLive;
     private Rigidbody2D target;
-    private IObjectPool<Enemy> Managedpool;
-
+    private IObjectPool<GameObject> Managedpool;
+    private Animator animator;
+    private EnemyData enemyData;
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
+        animator = spriteRenderer.GetComponent<Animator>();
     }
 
-    void Start()
+    void OnEnable()
     {
+        isLive = true;
+        health = maxHealth;
         target = Managers.Game.Player.GetComponent<Rigidbody2D>();
     }
 
@@ -81,4 +98,29 @@ public class Enemy : MonoBehaviour
     {
         spriteRenderer.flipX = target.position.x < rigid.position.x;
     }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Bullet"))
+        {
+            health -= collision.GetComponent<Bullet>().damage;
+
+            // Live
+            if (health > 0)
+            {
+
+            }
+            else
+            {
+                Dead();
+            }
+        }
+    }
+
+    void Dead()
+    {
+        DestroyPool();
+    }
+
+
 }
